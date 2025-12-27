@@ -5,13 +5,18 @@ from core.forms import StudentForm
 from .models import Student
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 
+
+
+def is_staff_user(user):
+    return user.is_authenticated and user.is_staff
 
 # Create your views here.
 def home(request):
     return render(request, 'core/home.html')
 
+@login_required
 def student_list(request):
     query = request.GET.get('q','')
     students = Student.objects.all().order_by('-created_at')
@@ -28,6 +33,7 @@ def student_list(request):
     return render(request, 'core/student_list.html', {'page_obj':page_obj,'query':query})
 
 @login_required
+@user_passes_test(is_staff_user)
 def student_create(request):
     if request.method == 'POST':
         form = StudentForm(request.POST, request.FILES)
@@ -41,6 +47,7 @@ def student_create(request):
     return render(request, 'core/student_form.html', {'form': form})
 
 @login_required
+@user_passes_test(is_staff_user)
 def student_update(request, pk):
     student = get_object_or_404(Student, pk=pk)
 
@@ -54,7 +61,9 @@ def student_update(request, pk):
         form = StudentForm(instance=student)
 
     return render(request, 'core/student_form.html', {'form': form})
+
 @login_required
+@user_passes_test(is_staff_user)
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
 
@@ -65,6 +74,9 @@ def student_delete(request, pk):
     
     return render(request,'core/student_confirm_delete.html',{'student':student})
 
+@login_required
 def student_detail(request, pk):
     student = get_object_or_404(Student,pk=pk)
     return render(request, 'core/student_detail.html', {'student':student})
+
+

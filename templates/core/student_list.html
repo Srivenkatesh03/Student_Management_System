@@ -28,7 +28,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Students</h2>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and user.is_staff %}
     <a href="{% url 'student_create' %}" class="btn btn-primary">Add Student</a>
     {% endif %}
 </div>
@@ -41,7 +41,7 @@
             <th>Roll Number</th>
             <th>Name</th>
             <th>Department</th>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.is_staff %}
             <th>Action</th>
             {% endif %}
         </tr>
@@ -57,7 +57,7 @@
                 </a>
             </td>
             <td>{{ student.department }}</td>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.is_staff %}
             <td>
                 <a href="{% url 'student_update' student.id %}"
                    class="btn btn-sm btn-warning">Edit</a>
