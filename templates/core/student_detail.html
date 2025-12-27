@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Student Details{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="card shadow">
+            {% if student.image %}
+                <img src="{{ student.image.url }}" class="card-img-top" style="height: 300px; object-fit: cover;">
+            {% endif %}
+
+            <div class="card-body">
+                <h4 class="card-title">{{ student.name }}</h4>
+
+                <p class="card-text">
+                    <strong>Email:</strong> {{ student.email }} <br>
+                    <strong>Age:</strong> {{ student.age }} <br>
+                    <strong>Department:</strong> {{ student.department }} <br>
+                    <strong>Roll Number:</strong> {{ student.roll_number }} <br>
+                    <strong>Joined:</strong> {{ student.created_at|date:"d M Y" }}
+                </p>
+
+                <a href="{% url 'student_update' student.id %}" class="btn btn-warning">
+                    Edit
+                </a>
+                <a href="{% url 'student_list' %}" class="btn btn-secondary">
+                    Back
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
