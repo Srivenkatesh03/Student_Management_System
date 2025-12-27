@@ -12,7 +12,17 @@ class StudentForm(forms.ModelForm):
             'department': forms.Select(attrs={'class': 'form-control'}),
             'roll_number': forms.TextInput(attrs={'class': 'form-control'}),
             'year': forms.NumberInput(attrs={'class': 'form-control'}),
-            'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
-
-            
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),    
         }
+
+    def clean_age(self):
+        age = self.cleaned_data.get('age')
+        if age < 18 or age > 30:
+            raise forms.ValidationError("Age must be between 10 to 30")
+        return age
+        
+    def clean_roll_number(self):
+        roll = self.cleaned_data.get('roll_number')
+        if not roll.isdigit():
+            raise forms.ValidationError("Roll number must contain only digits.")
+        return roll
