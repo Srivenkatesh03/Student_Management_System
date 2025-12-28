@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
+import csv
 from django.http import HttpResponse
 from django.contrib import messages
 from core.forms import StudentForm
@@ -103,4 +104,60 @@ def student_report(request, pk):
     }
     return render(request, 'core/student_report.html', context)
 
+@login_required
+@user_passes_test(is_staff_user)
+def export_student_details_csv(request,pk):
+    student= get_object_or_404(Student,pk=pk)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="student_{student.id}details.csv"'
+
+    writer = csv.writer(response)
+    
+    writer.writerow({
+        'Name','Email',"Department",'Year','Total Marks', 'Percentage', 'Result'
+    })
+
+    writer.writerow([
+        student.name,
+        student.email,
+        student.get_department_display(),
+        student.year,
+        student.total_marks_obtained(),
+        student.percentage(),
+        student.result(),
+    ])
+
+    return response
+
+
+@login_required
+@user_passes_test(is_staff_user)
+def export_student_marks_csv(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+    marks = student.marks.select_related('subject')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = (
+        f'attachment; filename="student_{student.id}_marks.csv"'
+    )
+
+    writer = csv.writer(response)
+
+    # Header
+    writer.writerow([
+        'Subject',
+        'Marks Obtained',
+        'Max Marks'
+    ])
+
+    # Rows
+    for mark in marks:
+        writer.writerow([
+            mark.subject.name,
+            mark.marks_obtained,
+            mark.subject.max_marks
+        ])
+
+    return response
 
