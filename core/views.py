@@ -161,3 +161,71 @@ def export_student_marks_csv(request, pk):
 
     return response
 
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import Student
+
+
+def is_staff_user(user):
+    return user.is_authenticated and user.is_staff
+
+
+@login_required
+@user_passes_test(is_staff_user)
+def export_all_students_excel(request):
+    wb = Workbook()
+
+    students_sheet = wb.active
+    students_sheet.title = "Students"
+
+    student_headers = [
+        "Student ID", "Name", "Email", "Department",
+        "Year", "Total Marks", "Percentage", "Result"
+    ]
+    students_sheet.append(student_headers)
+
+    for student in Student.objects.all():
+        students_sheet.append([
+            student.id,
+            student.name,
+            student.email,
+            student.get_department_display(),
+            student.year,
+            student.total_marks_obtained(),
+            student.percentage(),
+            student.result(),
+        ])
+
+    for col in range(1, len(student_headers) + 1):
+        students_sheet.column_dimensions[get_column_letter(col)].width = 20
+
+    marks_sheet = wb.create_sheet(title="Marks")
+
+    marks_headers = [
+        "Student ID", "Student Name",
+        "Subject", "Marks Obtained", "Max Marks"
+    ]
+    marks_sheet.append(marks_headers)
+
+    for student in Student.objects.all():
+        for mark in student.marks.select_related("subject"):
+            marks_sheet.append([
+                student.id,
+                student.name,
+                mark.subject.name,
+                mark.marks_obtained,
+                mark.subject.max_marks,
+            ])
+
+    for col in range(1, len(marks_headers) + 1):
+        marks_sheet.column_dimensions[get_column_letter(col)].width = 20
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = 'attachment; filename="All_Students_Report.xlsx"'
+
+    wb.save(response)
+    return response

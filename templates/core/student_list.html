@@ -121,6 +121,14 @@
         </table>
     </div>
 
+    {% if user.is_staff %}
+        <a href="{% url 'export_all_students_excel' %}"
+        class="btn btn-success btn-sm">
+        Download Excel
+        </a>
+        {% endif %}
+
+
     <!-- Pagination -->
     <nav aria-label="Student list pagination">
         <ul class="pagination justify-content-center">
