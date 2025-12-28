@@ -78,6 +78,13 @@
                         Students
                     </a>
                 </li>
+                {% if user.is_authenticated and not user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3" href="{% url 'student_attendance' %}">
+                        My Attendance
+                    </a>
+                </li>
+                {% endif %}
 
                 {% if user.is_staff %}
                     <li class="nav-item">

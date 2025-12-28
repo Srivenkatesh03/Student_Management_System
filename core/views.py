@@ -355,3 +355,21 @@ def student_dashboard(request):
     }
     return render(request, "core/student_dashboard.html",context)
 
+@login_required
+def student_attendance(request):
+    if request.user.is_staff:
+        return redirect("dashboard")
+
+    student = get_object_or_404(Student, user=request.user)
+
+    attendance_records = student.attendance.all().order_by("-date")
+
+    context = {
+        "student": student,
+        "attendance_records": attendance_records,
+        "total_days": student.total_attendance_days(),
+        "present_days": student.present_days(),
+        "attendance_percentage": student.attendance_percentage(),
+    }
+
+    return render(request, "core/student_attendance.html", context)

@@ -18,6 +18,8 @@ urlpatterns = [
     path("attendance/mark/", views.mark_attendance, name="mark_attendance"),
     path("attendance/view/", views.view_attendance, name="view_attendance"),
     path("my/", views.student_dashboard, name="student_dashboard"),
+    path("my/attendance/", views.student_attendance, name="student_attendance"),
+
 
 
 
