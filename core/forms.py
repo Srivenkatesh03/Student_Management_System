@@ -1,5 +1,6 @@
 from django import forms
 from .models import Student
+from .models import Marks
 
 class StudentForm(forms.ModelForm):
     class Meta:
@@ -26,3 +27,23 @@ class StudentForm(forms.ModelForm):
         if not roll.isdigit():
             raise forms.ValidationError("Roll number must contain only digits.")
         return roll
+    
+class MarksForm(forms.ModelForm):
+    class Meta:
+        model = Marks
+        fields = ['student','subject','marks_obtained']
+        widgets =  {
+            'student': forms.Select(attrs={'class': 'form-control'}),
+            'subject': forms.Select(attrs={'class': 'form-control'}),
+            'marks_obtained': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+        def clean_marks_obtained(self):
+            marks = self.cleaned_data.get('marks_obtained')
+            subject = self.cleaned_data.get('subject')
+
+            if subject and marks > subject.max_marks:
+                raise forms.ValidationError(
+                f"Marks cannot exceed {subject.max_marks} for this subject")
+            
+            return marks

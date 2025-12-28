@@ -24,3 +24,46 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
+
+class Subject(models.Model):
+    DEPARTMENT_CHOICES = [
+        ('CSE', 'Computer Science'),
+        ('ECE', 'Electronics'),
+        ('EEE', 'Electrical'),
+        ('ME', 'Mechanical'),
+        ('CE', 'Civil'),
+    ]
+    name = models.CharField(max_length=100)
+    department = models.CharField(
+        max_length=50,
+        choices=DEPARTMENT_CHOICES
+    )
+    max_marks = models.PositiveIntegerField(default=100)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+            return f"{self.name} ({self.get_department_display()})"
+
+    
+class Marks(models.Model):
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        related_name='marks'
+    )
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.CASCADE,
+        related_name='marks'
+    )
+
+    marks_obtained = models.PositiveIntegerField()
+    created_at = models.DateField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('student','subject')
+
+    def __str__(self):
+                return f"{self.student.name} - {self.subject.name}: {self.marks_obtained}"
+
+    

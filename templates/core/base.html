@@ -23,6 +23,12 @@
                     <a class="nav-link" href="{% url 'student_list' %}">Students</a>
                 </li>
 
+                {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'marks_create' %}">Add Marks</a>
+                    </li>
+                {% endif %}
+
                 <li class="nav-item">
                     <form method="post" action="{% url 'logout' %}" class="d-inline">
                         {% csrf_token %}

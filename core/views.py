@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
 from core.forms import StudentForm
+from core.forms import MarksForm
 from .models import Student
 from django.db.models import Q
 from django.core.paginator import Paginator
@@ -78,5 +79,18 @@ def student_delete(request, pk):
 def student_detail(request, pk):
     student = get_object_or_404(Student,pk=pk)
     return render(request, 'core/student_detail.html', {'student':student})
+
+
+@login_required
+@user_passes_test(is_staff_user)
+def marks_create(request):
+    if request.method == 'POST':
+        form = MarksForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('student_list')
+    else:
+        form = MarksForm()
+    return render(request, 'core/marks_form.html',{'form':form})
 
 
