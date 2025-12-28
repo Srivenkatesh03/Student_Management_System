@@ -4,13 +4,13 @@ from django.http import HttpResponse,HttpResponseForbidden
 from django.contrib import messages
 from core.forms import StudentForm, MarksForm, AttendanceForm
 from .models import Student, Attendance
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required,user_passes_test
-from django.db.models import Count
-from django.utils.timezone import now
+from django.utils.timezone import now, localdate
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
+from datetime import date
 
 
 
@@ -373,3 +373,30 @@ def student_attendance(request):
     }
 
     return render(request, "core/student_attendance.html", context)
+
+
+@login_required
+def student_monthly_attendance(request):
+    if request.user.is_staff:
+        return redirect("dashboard")
+
+    student = get_object_or_404(Student, user=request.user)
+
+    today = localdate()
+    year = int(request.GET.get("year", today.year))
+    month = int(request.GET.get("month", today.month))
+
+    records = student.monthly_attendance_queryset(year, month).order_by("date")
+
+    context = {
+        "student": student,
+        "records": records,
+        "year": year,
+        "month": month,
+        "total_days": student.monthly_total_days(year, month),
+        "present_days": student.monthly_present_days(year, month),
+        "absent_days": student.monthly_absent_days(year, month),
+        "percentage": student.monthly_attendance_percentage(year, month),
+    }
+
+    return render(request, "core/student_monthly_attendance.html", context)

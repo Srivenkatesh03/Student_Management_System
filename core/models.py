@@ -63,8 +63,27 @@ class Student(models.Model):
         if total_days == 0:
             return 0
         return round((self.present_days() / total_days) * 100, 2)
+    
+    def monthly_attendance_queryset(self, year, month):
+        return self.attendance.filter(
+            date__year=year,
+            date__month=month
+        )
 
+    def monthly_total_days(self, year, month):
+        return self.monthly_attendance_queryset(year, month).count()
 
+    def monthly_present_days(self, year, month):
+        return self.monthly_attendance_queryset(year, month).filter(status='P').count()
+
+    def monthly_absent_days(self, year, month):
+        return self.monthly_attendance_queryset(year, month).filter(status='A').count()
+
+    def monthly_attendance_percentage(self, year, month):
+        total = self.monthly_total_days(year, month)
+        if total == 0:
+            return 0
+        return round((self.monthly_present_days(year, month) / total) * 100, 2)
 
     def __str__(self):
         return self.name

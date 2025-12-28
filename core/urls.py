@@ -19,6 +19,8 @@ urlpatterns = [
     path("attendance/view/", views.view_attendance, name="view_attendance"),
     path("my/", views.student_dashboard, name="student_dashboard"),
     path("my/attendance/", views.student_attendance, name="student_attendance"),
+    path("my/attendance/monthly/", views.student_monthly_attendance, name="student_monthly_attendance"),
+
 
 
 
