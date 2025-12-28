@@ -1,100 +1,83 @@
-# 🎓 Student Management System – Django Web Application
+# 🎓 Student Management System (Django)
 
-A **full-stack Student Management System** built using **Django**, featuring authentication, role-based access control, CRUD operations, image uploads, search, pagination, and a clean Bootstrap UI.
-
-This project demonstrates **practical Django development skills**, backend logic, and frontend integration suitable for **entry-level software engineering roles**.
+A full-stack **Student Management System** built using **Django**, designed to manage students, marks, attendance, analytics, and role-based access (Admin & Student).  
+This project follows **real-world academic ERP logic** and is suitable for **college portals** and **learning management systems**.
 
 ---
 
-## 📌 Features
+## 🚀 Features
 
-### 🔐 Authentication & Authorization
-- User login and logout using Django’s built-in authentication system
+### 👨‍💼 Admin / Staff Features
+- Add, update, delete students
+- Upload student images
+- Add subjects and marks
+- Mark daily attendance (editable only for today)
+- View attendance for any date
+- Dashboard with analytics:
+  - Total students
+  - Pass / Fail count
+  - Department-wise statistics
+  - Average marks percentage
+  - Average attendance percentage
+  - Low attendance alerts (<75%)
+- Export:
+  - Individual student details (CSV)
+  - Individual student marks (CSV)
+  - All students + marks (Excel – multi-sheet)
+
+---
+
+### 👨‍🎓 Student Features
+- Secure login (role-based)
+- View only **their own**:
+  - Profile
+  - Marksheet
+  - Attendance history
+  - Monthly attendance report
+- Attendance percentage calculated dynamically
+- Monthly attendance summary (present / absent / percentage)
+- Read-only access (no data modification)
+
+---
+
+## 🔐 Authentication & Authorization
+- Django built-in authentication system
 - Role-based access:
-  - **Public users**: View student list and details
-  - **Staff users**: Add, edit, and delete students
-- Secure POST-based logout and CSRF protection
-
-### 👨‍🎓 Student Management (CRUD)
-- Add new students with profile image
-- View student details in a card-based UI
-- Update student information
-- Delete students with confirmation modal
-- Automatic cleanup of uploaded images using Django signals
-
-### 🔍 Search & Pagination
-- Search students by:
-  - Name
-  - Email
-  - Roll number
-  - Department
-- Paginated student list for scalability
-- Search state preserved across pagination
-
-### 🖼 Image Handling
-- Upload student profile images
-- Default placeholder for missing images
-- Automatically delete old images on update
-- Automatically delete images when student is removed
-
-### 🎨 UI & UX
-- Responsive design using **Bootstrap 5**
-- Clean dashboard-style layout
-- Badges for department and year
-- Confirmation modal for delete actions
-- User-friendly form validation messages
+  - **Staff** → Full access
+  - **Student** → Restricted to own data
+- Object-level security (students cannot access others’ records)
+- Safe login redirection (no infinite redirect loops)
 
 ---
 
-## 🛠 Tech Stack
-
-**Backend**
-- Python
-- Django
-
-**Frontend**
-- HTML5
-- CSS3
-- Bootstrap 5
-
-**Database**
-- SQLite (development)
-- Easily configurable for MySQL / PostgreSQL
-
-**Tools & Concepts**
-- Django ORM
-- ModelForms
-- Django Signals
-- Authentication & Authorization
-- Pagination & Filtering
-- Git & GitHub
+## 📊 Attendance System
+- Daily attendance (Present / Absent)
+- Attendance can be:
+  - ✅ Marked & edited only for **today**
+  - ❌ Not edited for past dates
+- Attendance percentage calculated dynamically
+- Monthly attendance reports per student
 
 ---
 
-## 📂 Project Structure
+## 🧠 Key Technical Concepts Used
+- Django ORM & Model relationships
+- Reusable business logic inside models
+- Role-based dashboards
+- Pagination & search
+- File uploads (images)
+- CSV & Excel export (`openpyxl`)
+- Secure view protection
+- Clean separation of concerns (models, views, templates)
 
-```text
-student_manager/
-│
-├── core/
-│   ├── models.py
-│   ├── views.py
-│   ├── forms.py
-│   ├── urls.py
-│   ├── signals.py
-│   └── templates/
-│       └── core/
-│           ├── student_list.html
-│           ├── student_detail.html
-│           ├── student_form.html
-│           └── base.html
-│
-├── templates/
-│   └── registration/
-│       └── login.html
-│
-├── media/
-│   └── students/
-│
-├── manage.py
-└── requirements.txt
+---
+
+## 🛠️ Tech Stack
+
+- **Backend:** Django (Python)
+- **Frontend:** HTML, Bootstrap
+- **Database:** SQLite (can be switched to PostgreSQL/MySQL)
+- **Authentication:** Django Auth
+- **Exports:** CSV, Excel (`openpyxl`)
+
+---
