@@ -21,6 +21,29 @@ class Student(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def total_marks_obtained(self):
+        return sum(mark.marks_obtained for mark in self.marks.all())
+
+    def total_max_marks(self):
+        return sum(mark.subject.max_marks for mark in self.marks.all())
+
+    def percentage(self):
+        max_marks = self.total_max_marks()
+        if max_marks == 0:
+            return 0
+        return round((self.total_marks_obtained() / max_marks) * 100, 2)
+
+    def has_failed_any_subject(self):
+        for mark in self.marks.all():
+            if mark.marks_obtained < 35:
+                return True
+        return False
+
+    def result(self):
+        if self.has_failed_any_subject():
+            return "FAIL"
+        return "PASS"
+
 
     def __str__(self):
         return self.name

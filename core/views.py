@@ -93,4 +93,14 @@ def marks_create(request):
         form = MarksForm()
     return render(request, 'core/marks_form.html',{'form':form})
 
+def student_report(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+    marks = student.marks.select_related('subject')
+
+    context = {
+        'student': student,
+        'marks': marks,
+    }
+    return render(request, 'core/student_report.html', context)
+
 

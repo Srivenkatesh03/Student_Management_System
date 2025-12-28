@@ -29,6 +29,11 @@
                             <strong>Joined:</strong> {{ student.created_at|date:"d M Y" }}
                         </p>
                         <div class="mt-3">
+                            <a href="{% url 'student_report' student.id %}"
+                                class="btn btn-primary">
+                                View Report
+                            </a>
+
                             <a href="{% url 'student_update' student.id %}" class="btn btn-warning">
                                 Edit
                             </a>

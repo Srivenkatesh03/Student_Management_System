@@ -13,39 +13,94 @@
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">Student Manager</a>
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
 
-        <ul class="navbar-nav ms-auto">
+        <!-- Hamburger -->
+        <button class="btn btn-dark"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#sidebar"
+                aria-controls="sidebar">
+            ☰
+        </button>
+
+        <!-- Brand -->
+        <a class="navbar-brand ms-2" href="{% url 'home' %}">
+            Student Manager
+        </a>
+
+        <!-- Right side: username + auth -->
+        <div class="d-flex align-items-center ms-auto">
+            {% if user.is_authenticated %}
+                <span class="text-white me-3">
+                    {{ user.username }}
+                </span>
+
+                <form method="post" action="{% url 'logout' %}" class="mb-0">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-light btn-sm">
+                        Logout
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">
+                    Login
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+</nav>
+
+<div class="offcanvas offcanvas-start text-bg-dark"
+     tabindex="-1"
+     id="sidebar"
+     aria-labelledby="sidebarLabel">
+
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="sidebarLabel">
+            Menu
+        </h5>
+        <button type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="offcanvas">
+        </button>
+    </div>
+
+    <div class="offcanvas-body p-0">
+        <ul class="nav flex-column">
+
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'student_list' %}">Students</a>
+                    <a class="nav-link text-white px-3"
+                       href="{% url 'student_list' %}">
+                        Students
+                    </a>
                 </li>
 
                 {% if user.is_staff %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'marks_create' %}">Add Marks</a>
+                        <a class="nav-link text-white px-3"
+                           href="{% url 'student_create' %}">
+                            Add Student
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white px-3"
+                           href="{% url 'marks_create' %}">
+                            Add Marks
+                        </a>
                     </li>
                 {% endif %}
-
-                <li class="nav-item d-flex align-items-center">
-                    <form method="post" action="{% url 'logout' %}" class="mb-0">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-link btn btn-link text-white p-0">
-                            Logout
-                        </button>
-                    </form>
-                </li>
-
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Login</a>
-                </li>
             {% endif %}
+
         </ul>
     </div>
-</nav>
+</div>
+
+
 
 <!-- Main Content -->
 <div class="container">
