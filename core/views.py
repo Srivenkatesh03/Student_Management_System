@@ -2,13 +2,13 @@ from django.shortcuts import redirect, render, get_object_or_404
 import csv
 from django.http import HttpResponse
 from django.contrib import messages
-from core.forms import StudentForm
-from core.forms import MarksForm
-from .models import Student
+from core.forms import StudentForm, MarksForm, AttendanceForm
+from .models import Student, Attendance
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Count
+from django.utils.timezone import now
 
 
 
@@ -265,3 +265,26 @@ def dashboard(request):
     }
 
     return render(request, "core/dashboard.html", context)
+
+@login_required
+@user_passes_test(is_staff_user)
+def mark_attendance(request):
+    date = request.GET.get('date') or now().date()
+    students = Student.objects.all()
+    if request.method == "POST":
+        for student in students:
+            status = request.POST.get(f"status_{student.id}")
+            if status:
+                Attendance.objects.update_or_create(
+                    student=student,
+                    date=date,
+                    defaults={"status":status}
+                ) 
+        return redirect("dashboard")
+    
+    context = {
+        "students":students,
+        "date":date
+    }
+    return render(request,"core/attendance_form.html",context)
+

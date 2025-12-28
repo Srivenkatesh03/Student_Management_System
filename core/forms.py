@@ -1,6 +1,5 @@
 from django import forms
-from .models import Student
-from .models import Marks
+from .models import Student, Marks, Attendance
 
 class StudentForm(forms.ModelForm):
     class Meta:
@@ -47,3 +46,13 @@ class MarksForm(forms.ModelForm):
                 f"Marks cannot exceed {subject.max_marks} for this subject")
             
             return marks
+        
+class AttendanceForm(forms.ModelForm):
+    class Meta:
+        model = Attendance
+        fields = ['student', 'date', 'status']
+        widgets = {
+            'student': forms.HiddenInput,
+            'date': forms.HiddenInput,
+            'status': forms.RadioSelect(choices=Attendance.STATUS_CHOICES)
+        }

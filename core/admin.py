@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import Student
-from .models import Subject
-from .models import Marks
+from .models import Student, Subject, Marks, Attendance
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
@@ -20,3 +18,9 @@ class MarksAdmin(admin.ModelAdmin):
     list_display = ('student','subject','marks_obtained')
     list_filter = ('subject','student')
     search_fields = ('student__name','subject__name')
+
+@admin.register(Attendance)
+class AttadanceAdmin(admin.ModelAdmin):
+    list_display = ('student', 'date', 'status')
+    list_filter = ('date', 'status')
+    search_fields = ('student__name',)
