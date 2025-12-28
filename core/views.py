@@ -30,7 +30,7 @@ def student_list(request):
         Q(department__icontains=query) |
         Q(roll_number__icontains=query) 
         )
-    paginator = Paginator(students,5)
+    paginator = Paginator(students,10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'core/student_list.html', {'page_obj':page_obj,'query':query})
@@ -269,22 +269,46 @@ def dashboard(request):
 @login_required
 @user_passes_test(is_staff_user)
 def mark_attendance(request):
-    date = request.GET.get('date') or now().date()
+    # Get date from GET or POST, fallback to today
+    date = request.GET.get('date') or request.POST.get('date') or now().date()
+
     students = Student.objects.all()
+
+    # Fetch existing attendance for this date
+    attendance_map = {
+        att.student_id: att.status
+        for att in Attendance.objects.filter(date=date)
+    }
+
     if request.method == "POST":
         for student in students:
             status = request.POST.get(f"status_{student.id}")
+
             if status:
                 Attendance.objects.update_or_create(
                     student=student,
                     date=date,
-                    defaults={"status":status}
-                ) 
-        return redirect("dashboard")
-    
+                    defaults={"status": status}
+                )
+
+        # Redirect to view attendance page for the same date
+        return redirect(f"/attendance/view/?date={date}")
+
     context = {
-        "students":students,
-        "date":date
+        "students": students,
+        "date": date,
+        "attendance_map": attendance_map,  # 👈 VERY IMPORTANT
     }
-    return render(request,"core/attendance_form.html",context)
+    return render(request, "core/attendance_form.html", context)
+
+@login_required
+@user_passes_test(is_staff_user)
+def view_attendance(request):
+    date = request.GET.get('date') or now().date()
+    attendance_records = Attendance.objects.filter(date=date).select_related('student')
+    context = {
+        'date':date,
+        'attendance_records':attendance_records
+    }
+    return render(request, 'core/attendance_list.html',context)
 

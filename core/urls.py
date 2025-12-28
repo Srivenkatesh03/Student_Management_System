@@ -16,6 +16,8 @@ urlpatterns = [
     path('export/students/excel/',views.export_all_students_excel,name='export_all_students_excel'),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("attendance/mark/", views.mark_attendance, name="mark_attendance"),
+    path("attendance/view/", views.view_attendance, name="view_attendance"),
+
 
 
 

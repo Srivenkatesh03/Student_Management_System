@@ -27,6 +27,8 @@
                             <strong>Department:</strong> {{ student.department }} <br>
                             <strong>Roll Number:</strong> {{ student.roll_number }} <br>
                             <strong>Joined:</strong> {{ student.created_at|date:"d M Y" }}
+                            <strong>Attendance Percentage:</strong>
+                             {{ student.attendance_percentage }}
                         </p>
                         <div class="mt-3">
                             <a href="{% url 'student_report' student.id %}"

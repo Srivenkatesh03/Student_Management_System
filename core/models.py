@@ -43,6 +43,19 @@ class Student(models.Model):
         if self.has_failed_any_subject():
             return "FAIL"
         return "PASS"
+    
+    def total_attendance_days(self):
+        return self.attendance.count()
+
+    def present_days(self):
+        return self.attendance.filter(status='P').count()
+
+    def attendance_percentage(self):
+        total_days = self.total_attendance_days()
+        if total_days == 0:
+            return 0
+        return round((self.present_days() / total_days) * 100, 2)
+
 
 
     def __str__(self):

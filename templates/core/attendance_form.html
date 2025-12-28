@@ -1,19 +1,25 @@
 {% extends "core/base.html" %}
-
+{% load dict_extras %}
 {% block title %}Mark Attendance{% endblock %}
 
 {% block content %}
+
+
 <div class="container mt-4">
 
     <h3 class="mb-3">Mark Attendance</h3>
-
+    <form method="get" class="mb-3">
+        <label class="form-label">Select Date</label>
+        <input type="date"
+            name="date"
+            class="form-control"
+            value="{{ date }}"
+            onchange="this.form.submit()">
+    </form>
     <form method="post">
         {% csrf_token %}
 
-        <div class="mb-3">
-            <label class="form-label">Date</label>
-            <input type="date" name="date" class="form-control" value="{{ date }}">
-        </div>
+       
 
         <table class="table table-bordered text-center">
             <thead class="table-dark">
@@ -29,13 +35,15 @@
                     <td>{{ student.name }}</td>
                     <td>
                         <input type="radio"
-                               name="status_{{ student.id }}"
-                               value="P" required>
+                            name="status_{{ student.id }}"
+                            value="P"
+                            {% if attendance_map|get_item:student.id == "P" %}checked{% endif %}>
                     </td>
                     <td>
                         <input type="radio"
-                               name="status_{{ student.id }}"
-                               value="A" required>
+                            name="status_{{ student.id }}"
+                            value="A"
+                            {% if attendance_map|get_item:student.id == "A" %}checked{% endif %}>
                     </td>
                 </tr>
                 {% endfor %}
