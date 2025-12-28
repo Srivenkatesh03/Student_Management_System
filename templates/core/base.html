@@ -29,14 +29,15 @@
                     </li>
                 {% endif %}
 
-                <li class="nav-item">
-                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                <li class="nav-item d-flex align-items-center">
+                    <form method="post" action="{% url 'logout' %}" class="mb-0">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-link nav-link p-0">
+                        <button type="submit" class="nav-link btn btn-link text-white p-0">
                             Logout
                         </button>
                     </form>
                 </li>
+
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'login' %}">Login</a>
