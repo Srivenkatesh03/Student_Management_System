@@ -8,6 +8,7 @@ from .models import Student
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required,user_passes_test
+from django.db.models import Count
 
 
 
@@ -229,3 +230,38 @@ def export_all_students_excel(request):
 
     wb.save(response)
     return response
+
+@login_required
+@user_passes_test(is_staff_user)
+def dashboard(request):
+    students = Student.objects.all()
+
+    total_students = students.count()
+
+    passed_students = sum(
+        1 for student in students if student.result() == "PASS"
+    )
+    failed_students = total_students - passed_students
+
+    department_stats = (
+        students.values("department")
+        .annotate(count=Count("id"))
+    )
+
+    percentages = [
+        student.percentage() for student in students
+        if student.total_max_marks() > 0
+    ]
+    avg_percentage = round(
+        sum(percentages) / len(percentages), 2
+    ) if percentages else 0
+
+    context = {
+        "total_students": total_students,
+        "passed_students": passed_students,
+        "failed_students": failed_students,
+        "department_stats": department_stats,
+        "avg_percentage": avg_percentage,
+    }
+
+    return render(request, "core/dashboard.html", context)
