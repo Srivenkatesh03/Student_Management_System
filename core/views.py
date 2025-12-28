@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render, get_object_or_404
 import csv
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseForbidden
 from django.contrib import messages
 from core.forms import StudentForm, MarksForm, AttendanceForm
 from .models import Student, Attendance
@@ -9,17 +9,23 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.db.models import Count
 from django.utils.timezone import now
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+
 
 
 
 def is_staff_user(user):
     return user.is_authenticated and user.is_staff
 
+
+
 # Create your views here.
 def home(request):
     return render(request, 'core/home.html')
 
 @login_required
+@user_passes_test(is_staff_user)
 def student_list(request):
     query = request.GET.get('q','')
     students = Student.objects.all().order_by('-created_at')
@@ -79,8 +85,14 @@ def student_delete(request, pk):
 
 @login_required
 def student_detail(request, pk):
-    student = get_object_or_404(Student,pk=pk)
-    return render(request, 'core/student_detail.html', {'student':student})
+    student = get_object_or_404(Student, pk=pk)
+
+    if not request.user.is_staff:
+        if student.user != request.user:
+            return HttpResponseForbidden("Access denied")
+
+    return render(request, 'core/student_detail.html', {'student': student})
+
 
 
 @login_required
@@ -95,8 +107,14 @@ def marks_create(request):
         form = MarksForm()
     return render(request, 'core/marks_form.html',{'form':form})
 
+@login_required
 def student_report(request, pk):
     student = get_object_or_404(Student, pk=pk)
+
+    if not request.user.is_staff:
+        if student.user != request.user:
+            return HttpResponseForbidden("Access denied")
+
     marks = student.marks.select_related('subject')
 
     context = {
@@ -104,6 +122,7 @@ def student_report(request, pk):
         'marks': marks,
     }
     return render(request, 'core/student_report.html', context)
+
 
 @login_required
 @user_passes_test(is_staff_user)
@@ -161,17 +180,6 @@ def export_student_marks_csv(request, pk):
         ])
 
     return response
-
-from openpyxl import Workbook
-from openpyxl.utils import get_column_letter
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Student
-
-
-def is_staff_user(user):
-    return user.is_authenticated and user.is_staff
-
 
 @login_required
 @user_passes_test(is_staff_user)
@@ -256,12 +264,33 @@ def dashboard(request):
         sum(percentages) / len(percentages), 2
     ) if percentages else 0
 
+    attendance_percentages = [
+    student.attendance_percentage()
+    for student in students
+    if student.total_attendance_days() > 0
+]
+
+    average_attendance = (
+        round(sum(attendance_percentages) / len(attendance_percentages), 2)
+        if attendance_percentages else 0
+    )
+
+    LOW_ATTENDANCE_LIMIT = 75
+
+    low_attendance_students = [
+        student for student in students
+        if student.attendance_percentage() < LOW_ATTENDANCE_LIMIT
+    ]
+
     context = {
         "total_students": total_students,
         "passed_students": passed_students,
         "failed_students": failed_students,
         "department_stats": department_stats,
         "avg_percentage": avg_percentage,
+        "average_attendance": average_attendance,
+        "low_attendance_students": low_attendance_students,
+        "low_attendance_count": len(low_attendance_students),
     }
 
     return render(request, "core/dashboard.html", context)
@@ -311,4 +340,18 @@ def view_attendance(request):
         'attendance_records':attendance_records
     }
     return render(request, 'core/attendance_list.html',context)
+
+@login_required
+def student_dashboard(request):
+    if request.user.is_staff:
+        return redirect("dashboard")
+    
+    student = get_object_or_404(Student, user=request.user)
+
+    context = {
+        "student":student,
+        "marks":student.marks.all(),
+        "attendance": student.attendance.all(),
+    }
+    return render(request, "core/student_dashboard.html",context)
 

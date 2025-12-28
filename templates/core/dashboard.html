@@ -45,6 +45,26 @@
             </div>
         </div>
     </div>
+    <div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-bg-info shadow-sm">
+            <div class="card-body">
+                <h6>Average Attendance</h6>
+                <h3>{{ average_attendance }}%</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-bg-warning shadow-sm">
+            <div class="card-body">
+                <h6>Low Attendance (&lt; 75%)</h6>
+                <h3>{{ low_attendance_count }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <!-- Department-wise Count -->
     <div class="card shadow-sm">
@@ -69,6 +89,6 @@
             </table>
         </div>
     </div>
-
+    
 </div>
 {% endblock %}

@@ -122,5 +122,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = '/accounts/login/'
 
-LOGIN_REDIRECT_URL = '/students/'
+LOGIN_REDIRECT_URL = '/my'
 LOGOUT_REDIRECT_URL = '/accounts/login/'

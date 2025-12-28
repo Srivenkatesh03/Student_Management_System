@@ -1,7 +1,15 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.contrib.auth.models import User
 
 class Student(models.Model):
+    user = models.OneToOneField(
+         User,
+         on_delete=models.CASCADE,
+         null=True,
+         blank=True
+    )
+
     DEPARTMENT_CHOICES = [
         ('CSE', 'Computer Science'),
         ('ECE', 'Electronics'),
