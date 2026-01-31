@@ -12,11 +12,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python deps
-COPY requirements.txt .
+COPY ../app/requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy project
-COPY . .
+# Copy Django app
+COPY ../app/ /app/
 
 # Expose port
 EXPOSE 8000
