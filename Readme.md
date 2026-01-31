@@ -1,6 +1,6 @@
-# 🎓 Student Management System (Django)
+# Student Management System (Django + DevOps)
 
-A full-stack **Student Management System** built using **Django**, designed to manage students, marks, attendance, analytics, and role-based access (Admin & Student).  
+A full-stack **Student Management System** built using **Django** and **PostgreSQL**,containerized using **Docker** and orchestrated with **Docker Compose** designed to manage students, marks, attendance, analytics, and role-based access (Admin & Student).  
 This project follows **real-world academic ERP logic** and is suitable for **college portals** and **learning management systems**.
 
 ---
@@ -76,9 +76,35 @@ This project follows **real-world academic ERP logic** and is suitable for **col
 
 - **Backend:** Django (Python)
 - **Frontend:** HTML, Bootstrap
-- **Database:** SQLite (can be switched to PostgreSQL/MySQL)
+- **Database:** PostgreSQL
 - **Authentication:** Django Auth
 - **Exports:** CSV, Excel (`openpyxl`)
+
+---
+
+## Features
+- Student CRUD operations
+- Authentication & admin panel
+- Media uploads
+- PostgreSQL database
+- Environment-based configuration
+
+---
+
+## Tech Stack
+- Django
+- PostgreSQL
+- Docker
+- Docker Compose
+- Gunicorn
+
+---
+
+## Architecture
+- Django runs in a Docker container
+- PostgreSQL runs as a separate service
+- Data persisted using Docker volumes
+- App configured using environment variables
 
 ---
 
