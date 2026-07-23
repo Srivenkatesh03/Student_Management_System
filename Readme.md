@@ -198,7 +198,7 @@ kubectl apply -f k8s/
 kubectl get pods
 kubectl get services
 ```
-
+**Note:** This project includes an AWS EKS StorageClass (ebs-sc) using the Amazon EBS CSI Driver. For other Kubernetes distributions (Minikube, kind, Docker Desktop, AKS, GKE), replace the StorageClass with the appropriate storage provisioner for your environment.
 ---
 
 ## 🧠 Key Technical Concepts Demonstrated
